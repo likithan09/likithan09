@@ -1,0 +1,525 @@
+class Solution {
+public:
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        int m = nums1.size(), n = nums2.size();
+        function<int(int, int, int)> f = [&](int i, int j, int k) {
+            if (i >= m) {
+                return nums2[j + k - 1];
+            }
+            if (j >= n) {
+                return nums1[i + k - 1];
+            }
+            if (k == 1) {
+                return min(nums1[i], nums2[j]);
+            }
+            int p = k / 2;
+            int x = i + p - 1 < m ? nums1[i + p - 1] : 1 << 30;
+            int y = j + p - 1 < n ? nums2[j + p - 1] : 1 << 30;
+            return x < y ? f(i + p, j, k - p) : f(i, j + p, k - p);
+        };
+        int a = f(0, 0, (m + n + 1) / 2);
+        int b = f(0, 0, (m + n + 2) / 2);
+        return (a + b) / 2.0;
+    }
+};
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        int cnt[128]{};
+        int ans = 0, n = s.size();
+        for (int l = 0, r = 0; r < n; ++r) {
+            ++cnt[s[r]];
+            while (cnt[s[r]] > 1) {
+                --cnt[s[l++]];
+            }
+            ans = max(ans, r - l + 1);
+        }
+        return ans;
+    }
+};
+class Solution {
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        ListNode *dummy = new ListNode(); 
+        ListNode *temp = dummy; 
+        int carry = 0;
+        while( (l1 != NULL || l2 != NULL) || carry) {
+            int sum = 0; 
+            if(l1 != NULL) {
+                sum += l1->val; 
+                l1 = l1 -> next; 
+            }
+            
+            if(l2 != NULL) {
+                sum += l2 -> val; 
+                l2 = l2 -> next; 
+            }
+            
+            sum += carry; 
+            carry = sum / 10; 
+            ListNode *node = new ListNode(sum % 10); 
+            temp -> next = node; 
+            temp = temp -> next; 
+        }
+        return dummy -> next; 
+    }
+};
+class Solution {
+public:
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+        vector<vector<int>> ans;
+        int n = nums.size();
+        for (int i = 0; i < n - 2 && nums[i] <= 0; ++i) {
+            if (i && nums[i] == nums[i - 1]) {
+                continue;
+            }
+            int j = i + 1, k = n - 1;
+            while (j < k) {
+                int x = nums[i] + nums[j] + nums[k];
+                if (x < 0) {
+                    ++j;
+                } else if (x > 0) {
+                    --k;
+                } else {
+                    ans.push_back({nums[i], nums[j++], nums[k--]});
+                    while (j < k && nums[j] == nums[j - 1]) {
+                        ++j;
+                    }
+                    while (j < k && nums[k] == nums[k + 1]) {
+                        --k;
+                    }
+                }
+            }
+        }
+        return ans;
+    }
+};
+class Solution {
+public:
+    int threeSumClosest(vector<int>& nums, int target) {
+        sort(nums.begin(), nums.end());
+        int ans = 1 << 30;
+        int n = nums.size();
+        for (int i = 0; i < n; ++i) {
+            int j = i + 1, k = n - 1;
+            while (j < k) {
+                int t = nums[i] + nums[j] + nums[k];
+                if (t == target) return t;
+                if (abs(t - target) < abs(ans - target)) ans = t;
+                if (t > target)
+                    --k;
+                else
+                    ++j;
+            }
+        }
+        return ans;
+    }
+};
+class Solution {
+ private:
+ 	vector<string> res_;
+ 	string key[10] = {"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+ public:
+ 	vector<string> letterCombinations(string digits) {
+ 		if(digits.empty()) return res_;
+ 		recursion(digits, "", 0);
+ 		return res_;
+ 	}
+ 	void recursion(string s, string cur, int index){
+ 		if(index == s.length()) res_.emplace_back(cur);
+ 		else{
+ 			string letters = key[s[index] - '0'];
+ 			for(const char c: letters){
+ 				recursion(s, cur + c, index + 1);
+ 			}
+ 		}
+ 	}
+ };
+class Solution {
+public:
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
+        int n = nums.size();
+        vector<vector<int>> ans;
+        if (n < 4) {
+            return ans;
+        }
+        sort(nums.begin(), nums.end());
+        for (int i = 0; i < n - 3; ++i) {
+            if (i && nums[i] == nums[i - 1]) {
+                continue;
+            }
+            for (int j = i + 1; j < n - 2; ++j) {
+                if (j > i + 1 && nums[j] == nums[j - 1]) {
+                    continue;
+                }
+                int k = j + 1, l = n - 1;
+                while (k < l) {
+                    long long x = (long long) nums[i] + nums[j] + nums[k] + nums[l];
+                    if (x < target) {
+                        ++k;
+                    } else if (x > target) {
+                        --l;
+                    } else {
+                        ans.push_back({nums[i], nums[j], nums[k++], nums[l--]});
+                        while (k < l && nums[k] == nums[k - 1]) {
+                            ++k;
+                        }
+                        while (k < l && nums[l] == nums[l + 1]) {
+                            --l;
+                        }
+                    }
+                }
+            }
+        }
+        return ans;
+    }
+};
+class Solution {
+public:
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
+        int n = nums.size();
+        vector<vector<int>> ans;
+        if (n < 4) {
+            return ans;
+        }
+        sort(nums.begin(), nums.end());
+        for (int i = 0; i < n - 3; ++i) {
+            if (i && nums[i] == nums[i - 1]) {
+                continue;
+            }
+            for (int j = i + 1; j < n - 2; ++j) {
+                if (j > i + 1 && nums[j] == nums[j - 1]) {
+                    continue;
+                }
+                int k = j + 1, l = n - 1;
+                while (k < l) {
+                    long long x = (long long) nums[i] + nums[j] + nums[k] + nums[l];
+                    if (x < target) {
+                        ++k;
+                    } else if (x > target) {
+                        --l;
+                    } else {
+                        ans.push_back({nums[i], nums[j], nums[k++], nums[l--]});
+                        while (k < l && nums[k] == nums[k - 1]) {
+                            ++k;
+                        }
+                        while (k < l && nums[l] == nums[l + 1]) {
+                            --l;
+                        }
+                    }
+                }
+            }
+        }
+        return ans;
+    }
+};
+class Solution {
+public:
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
+        int n = nums.size();
+        vector<vector<int>> ans;
+        if (n < 4) {
+            return ans;
+        }
+        sort(nums.begin(), nums.end());
+        for (int i = 0; i < n - 3; ++i) {
+            if (i && nums[i] == nums[i - 1]) {
+                continue;
+            }
+            for (int j = i + 1; j < n - 2; ++j) {
+                if (j > i + 1 && nums[j] == nums[j - 1]) {
+                    continue;
+                }
+                int k = j + 1, l = n - 1;
+                while (k < l) {
+                    long long x = (long long) nums[i] + nums[j] + nums[k] + nums[l];
+                    if (x < target) {
+                        ++k;
+                    } else if (x > target) {
+                        --l;
+                    } else {
+                        ans.push_back({nums[i], nums[j], nums[k++], nums[l--]});
+                        while (k < l && nums[k] == nums[k - 1]) {
+                            ++k;
+                        }
+                        while (k < l && nums[l] == nums[l + 1]) {
+                            --l;
+                        }
+                    }
+                }
+            }
+        }
+        return ans;
+    }
+};
+class Solution {
+public:
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
+        int n = nums.size();
+        vector<vector<int>> ans;
+        if (n < 4) {
+            return ans;
+        }
+        sort(nums.begin(), nums.end());
+        for (int i = 0; i < n - 3; ++i) {
+            if (i && nums[i] == nums[i - 1]) {
+                continue;
+            }
+            for (int j = i + 1; j < n - 2; ++j) {
+                if (j > i + 1 && nums[j] == nums[j - 1]) {
+                    continue;
+                }
+                int k = j + 1, l = n - 1;
+                while (k < l) {
+                    long long x = (long long) nums[i] + nums[j] + nums[k] + nums[l];
+                    if (x < target) {
+                        ++k;
+                    } else if (x > target) {
+                        --l;
+                    } else {
+                        ans.push_back({nums[i], nums[j], nums[k++], nums[l--]});
+                        while (k < l && nums[k] == nums[k - 1]) {
+                            ++k;
+                        }
+                        while (k < l && nums[l] == nums[l + 1]) {
+                            --l;
+                        }
+                    }
+                }
+            }
+        }
+        return ans;
+    }
+};
+class Solution {
+public:
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
+        int n = nums.size();
+        vector<vector<int>> ans;
+        if (n < 4) {
+            return ans;
+        }
+        sort(nums.begin(), nums.end());
+        for (int i = 0; i < n - 3; ++i) {
+            if (i && nums[i] == nums[i - 1]) {
+                continue;
+            }
+            for (int j = i + 1; j < n - 2; ++j) {
+                if (j > i + 1 && nums[j] == nums[j - 1]) {
+                    continue;
+                }
+                int k = j + 1, l = n - 1;
+                while (k < l) {
+                    long long x = (long long) nums[i] + nums[j] + nums[k] + nums[l];
+                    if (x < target) {
+                        ++k;
+                    } else if (x > target) {
+                        --l;
+                    } else {
+                        ans.push_back({nums[i], nums[j], nums[k++], nums[l--]});
+                        while (k < l && nums[k] == nums[k - 1]) {
+                            ++k;
+                        }
+                        while (k < l && nums[l] == nums[l + 1]) {
+                            --l;
+                        }
+                    }
+                }
+            }
+        }
+        return ans;
+    }
+};
+class Solution {
+public:
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        ListNode* dummy = new ListNode(0, head);
+        ListNode* fast = dummy;
+        ListNode* slow = dummy;
+        while (n--) {
+            fast = fast->next;
+        }
+        while (fast->next) {
+            slow = slow->next;
+            fast = fast->next;
+        }
+        slow->next = slow->next->next;
+        return dummy->next;
+    }
+};
+class Solution {
+public:
+    vector<string> generateParenthesis(int n) {
+        vector<string> ans;
+        function<void(int, int, string)> dfs = [&](int l, int r, string t) {
+            if (l > n || r > n || l < r) return;
+            if (l == n && r == n) {
+                ans.push_back(t);
+                return;
+            }
+            dfs(l + 1, r, t + "(");
+            dfs(l, r + 1, t + ")");
+        };
+        dfs(0, 0, "");
+        return ans;
+    }
+};
+class Solution {
+public:
+    void nextPermutation(vector<int>& nums) {
+        int n = nums.size();
+        int i = n - 2;
+        while (~i && nums[i] >= nums[i + 1]) {
+            --i;
+        }
+        if (~i) {
+            for (int j = n - 1; j > i; --j) {
+                if (nums[j] > nums[i]) {
+                    swap(nums[i], nums[j]);
+                    break;
+                }
+            }
+        }
+        reverse(nums.begin() + i + 1, nums.end());
+    }
+};
+class Solution {
+public:
+    int longestValidParentheses(string s) {
+        int n = s.size();
+        int f[n + 1];
+        memset(f, 0, sizeof(f));
+        for (int i = 2; i <= n; ++i) {
+            if (s[i - 1] == ')') {
+                if (s[i - 2] == '(') {
+                    f[i] = f[i - 2] + 2;
+                } else {
+                    int j = i - f[i - 1] - 1;
+                    if (j && s[j - 1] == '(') {
+                        f[i] = f[i - 1] + 2 + f[j - 1];
+                    }
+                }
+            }
+        }
+        return *max_element(f, f + n + 1);
+    }
+};
+class Solution {
+public:
+    int search(vector<int>& nums, int target) {
+        int n = nums.size();
+        int left = 0, right = n - 1;
+        while (left < right) {
+            int mid = (left + right) >> 1;
+            if (nums[0] <= nums[mid]) {
+                if (nums[0] <= target && target <= nums[mid])
+                    right = mid;
+                else
+                    left = mid + 1;
+            } else {
+                if (nums[mid] < target && target <= nums[n - 1])
+                    left = mid + 1;
+                else
+                    right = mid;
+            }
+        }
+        return nums[left] == target ? left : -1;
+    }
+};
+class Solution {
+public:
+    bool isValidSudoku(vector<vector<char>>& board) {
+        vector<vector<bool>> row(9, vector<bool>(9, false));
+        vector<vector<bool>> col(9, vector<bool>(9, false));
+        vector<vector<bool>> sub(9, vector<bool>(9, false));
+        for (int i = 0; i < 9; ++i) {
+            for (int j = 0; j < 9; ++j) {
+                char c = board[i][j];
+                if (c == '.') continue;
+                int num = c - '0' - 1;
+                int k = i / 3 * 3 + j / 3;
+                if (row[i][num] || col[j][num] || sub[k][num]) {
+                    return false;
+                }
+                row[i][num] = true;
+                col[j][num] = true;
+                sub[k][num] = true;
+            }
+        }
+        return true;
+    }
+};
+class Solution {
+ private:
+ 	bool dfs(vector<vector<char>>& board, int i_start, int j_start){
+ 		for(int i = 0; i < 9; ++i, j_start = 0){
+ 			for(int j = 0; j < 9; ++j){
+ 				if(board[i][j] != '.') continue;
+ 				for(char c = '1'; c <= '9'; ++c){
+ 					if(check(board, i, j, c)){
+ 						board[i][j] = c;
+ 						if(dfs(board, i, j + 1)) return true;
+ 						board[i][j] = '.';
+ 					}
+ 				}
+ 				return false;
+ 			}
+ 		}
+ 		return true;
+ 	}
+ 	bool check(vector<vector<char>>& board, int row, int col, char c){
+ 		for(int i = 0; i < 9; i++){
+ 			if(board[row][i] == c) return false;
+ 			if(board[i][col] == c) return false;
+ 			if(board[3 * (row / 3) + i / 3][3 * (col / 3) + i % 3] == c) return false;
+ 		}
+ 		return true;
+ 	}
+ public:
+ 	void solveSudoku(vector<vector<char>>& board) {
+ 		dfs(board, 0, 0);
+ 	}
+ };
+class Solution {
+public:
+    string countAndSay(int n) {
+        string s = "1";
+        while (--n) {
+            string t = "";
+            for (int i = 0; i < s.size();) {
+                int j = i;
+                while (j < s.size() && s[j] == s[i]) ++j;
+                t += to_string(j - i);
+                t += s[i];
+                i = j;
+            }
+            s = t;
+        }
+        return s;
+    }
+};
+class Solution {
+public:
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        sort(candidates.begin(), candidates.end());
+        vector<vector<int>> ans;
+        vector<int> t;
+        function<void(int, int)> dfs = [&](int i, int s) {
+            if (s == 0) {
+                ans.emplace_back(t);
+                return;
+            }
+            if (s < candidates[i]) {
+                return;
+            }
+            for (int j = i; j < candidates.size(); ++j) {
+                t.push_back(candidates[j]);
+                dfs(j, s - candidates[j]);
+                t.pop_back();
+            }
+        };
+        dfs(0, target);
+        return ans;
+    }
+};
